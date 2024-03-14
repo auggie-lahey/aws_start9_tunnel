@@ -1,0 +1,28 @@
+#!/bin/bash
+apt update && apt install -y \
+    certbot \
+    nginx \
+    socat \
+    tor \
+    unzip \
+    net-tools \
+    pip 
+pip install certbot-route53 --break-system-packages    
+
+# aws cli install
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip -q awscliv2.zip
+./aws/install
+SYMLINK='/usr/bin/aws'
+TARGET='/usr/local/bin/aws'
+echo "Creating the symlink '$SYMLINK' pointing to '$TARGET'"
+ln -s -f $TARGET $SYMLINK
+rm awscliv2.zip
+rm -rf ./aws
+
+#ssm install and enable
+mkdir /tmp/ssm
+cd /tmp/ssm
+wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
+sudo dpkg -i amazon-ssm-agent.deb
+sudo systemctl status amazon-ssm-agent
